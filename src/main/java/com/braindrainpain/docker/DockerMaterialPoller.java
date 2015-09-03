@@ -47,7 +47,8 @@ public class DockerMaterialPoller implements PackageMaterialPoller {
     public PackageRevision getLatestRevision(
             final PackageConfiguration packageConfiguration, 
             final RepositoryConfiguration repositoryConfiguration) {
-        
+
+        LOG.info("get last revision is called");
         // the fields must be valid
         this.validateData(repositoryConfiguration, packageConfiguration);
 
@@ -61,6 +62,9 @@ public class DockerMaterialPoller implements PackageMaterialPoller {
             final PackageConfiguration packageConfiguration, 
             final RepositoryConfiguration repositoryConfiguration, 
             final PackageRevision packageRevision) {
+
+        LOG.info("last modification since is called");
+
         PackageRevision latestRevision = this.getLatestRevision(packageConfiguration, repositoryConfiguration);
 
         if (!latestRevision.getRevision().contentEquals(packageRevision.getRevision())) {
@@ -79,6 +83,8 @@ public class DockerMaterialPoller implements PackageMaterialPoller {
     public Result checkConnectionToRepository(
             final RepositoryConfiguration repositoryConfiguration) {
 
+
+        LOG.info("check connection repository is called");
         Result result = this.validateRepository(repositoryConfiguration);
         if (!result.isSuccessful()) {
             return result;
@@ -108,15 +114,18 @@ public class DockerMaterialPoller implements PackageMaterialPoller {
     public Result checkConnectionToPackage(
             final PackageConfiguration packageConfiguration, 
             final RepositoryConfiguration repositoryConfiguration) {
-        
+
+        LOG.info("check connection to package is called");
         Result checkConnectionResult = this.checkConnectionToRepository(repositoryConfiguration);
         if (!checkConnectionResult.isSuccessful()) {
             return checkConnectionResult;
         }
 
         try {
+            LOG.info("start package validation");
             Result packageConfigurationValidationResult = packageValidation(packageConfiguration, repositoryConfiguration);
             if (!packageConfigurationValidationResult.isSuccessful()) {
+                LOG.info("package validation not successful.");
                 return packageConfigurationValidationResult;
             }
 
@@ -124,7 +133,7 @@ public class DockerMaterialPoller implements PackageMaterialPoller {
             return new Result().withSuccessMessages(String.format("Found package '%s'.", latestRevision.getRevision()));
         } catch (Exception e) {
             String message = String.format("Could not find any package that matched '%s'.", packageConfiguration.get(Constants.REPOSITORY).getValue());
-            LOG.warn(message);
+            LOG.info(message + e);
             return new Result().withErrorMessages(message);
         }
     }
@@ -137,7 +146,8 @@ public class DockerMaterialPoller implements PackageMaterialPoller {
      */
     private Result validateRepository(
             final RepositoryConfiguration repositoryConfiguration) {
-        
+
+        LOG.info("validate repository is called");
         ValidationResult validationResult = new DockerMaterialConfiguration().isRepositoryConfigurationValid(repositoryConfiguration);
         if (!validationResult.isSuccessful()) {
             return new Result().withErrorMessages(validationResult.getMessages());
@@ -155,7 +165,8 @@ public class DockerMaterialPoller implements PackageMaterialPoller {
     private Result packageValidation(
             final PackageConfiguration packageConfigurations, 
             final RepositoryConfiguration repositoryPackageConfiguration) {
-        
+
+        LOG.info("package validation is called");
         ValidationResult validationResult = new DockerMaterialConfiguration().isPackageConfigurationValid(packageConfigurations, repositoryPackageConfiguration);
         if (!validationResult.isSuccessful()) {
             return new Result().withErrorMessages(validationResult.getMessages());
@@ -172,7 +183,8 @@ public class DockerMaterialPoller implements PackageMaterialPoller {
     private void validateData(
             final RepositoryConfiguration repositoryConfigurations, 
             final PackageConfiguration packageConfigurations) {
-        
+
+        LOG.info("validate data is called");
         ValidationResult validationResult = new ValidationResult();
         new DockerMaterialConfiguration().validate(packageConfigurations, repositoryConfigurations, validationResult);
         if (!validationResult.isSuccessful()) {

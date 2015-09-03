@@ -28,15 +28,15 @@ import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.material.packagerepository.RepositoryConfiguration;
 import com.thoughtworks.go.plugin.api.response.validation.ValidationError;
 import com.thoughtworks.go.plugin.api.response.validation.ValidationResult;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.lang.StringUtils;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Docker Registry connector.
@@ -65,7 +65,7 @@ public class DockerRegistry extends HttpSupport {
      * @param url RegistryURL
      */
     private DockerRegistry(final String url) {
-        this.url = url;
+        this.url = url + "/v2/";
     }
 
     public static DockerRegistry getInstance(final String url) {
@@ -115,6 +115,7 @@ public class DockerRegistry extends HttpSupport {
             int returnCode = client.executeMethod(method);
             if (returnCode != HttpStatus.SC_OK) {
                 LOG.error("Not ok from: '" + url + "'");
+                LOG.error("status: "+returnCode);
                 throw new RuntimeException("Not ok from: '" + url +"'");
             }
         } catch (IOException e) {

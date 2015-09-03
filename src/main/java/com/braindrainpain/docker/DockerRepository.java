@@ -23,19 +23,19 @@ SOFTWARE.
  */
 package com.braindrainpain.docker;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageConfiguration;
 import com.thoughtworks.go.plugin.api.material.packagerepository.RepositoryConfiguration;
-
-import java.io.IOException;
-import java.text.MessageFormat;
-import com.thoughtworks.go.plugin.api.logging.Logger;
-import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Iterator;
 
 /**
  * Docker Repository connector.
@@ -57,18 +57,20 @@ public class DockerRepository extends HttpSupport {
     }
 
     public DockerTag getLatestRevision(final PackageConfiguration packageConfiguration) {
-        String tagName = packageConfiguration.get(Constants.TAG).getValue();        
-        JsonObject jsonTags = this.allTags(packageConfiguration);
+        String tagName = packageConfiguration.get(Constants.TAG).getValue();
+        JsonArray jsonTags = this.allTags(packageConfiguration);
         return this.getLatestTag(jsonTags, tagName);
     }
 
-    private DockerTag getLatestTag(final JsonObject tags, final String tagName) {
+    private DockerTag getLatestTag(final JsonArray tags, final String tagName) {
         DockerTag result = null;
-        for (Map.Entry<String, JsonElement> entry : tags.entrySet()) {
-            if (tagName.equals(entry.getKey())) {
-                result = new DockerTag(entry.getKey(), entry.getValue().getAsString());
+        for (Iterator<JsonElement> iterator = tags.iterator(); iterator.hasNext(); ) {
+            String value = iterator.next().getAsString();
+            LOG.info("looking for tag named: "+tagName);
+            LOG.info("value: " + value);
+            if (tagName.equals(value)) {
+                result = new DockerTag(tagName, value);
                 LOG.info("Found tag: " + result);
-                break;
             }
         }
         return result;
@@ -80,24 +82,33 @@ public class DockerRepository extends HttpSupport {
      * @param packageConfiguration
      * @return 
      */
-    private JsonObject allTags(final PackageConfiguration packageConfiguration) {
-        JsonObject result = null;
+    private JsonArray allTags(final PackageConfiguration packageConfiguration) {
+        JsonArray result = null;
         HttpClient client = super.getHttpClient();
 
-        String repository = MessageFormat.format(DockerAPI.V1.getUrl(),
+        LOG.info("allTags is called");
+
+        String repository = MessageFormat.format(DockerAPI.V2.getUrl(),
                 repositoryConfiguration.get(Constants.REGISTRY).getValue(),
                 packageConfiguration.get(Constants.REPOSITORY).getValue());
-        
+
+        LOG.info("repository: "+repository);
+        LOG.info("docker api url: "+DockerAPI.V2.getUrl());
+        LOG.info("registry value: "+repositoryConfiguration.get(Constants.REGISTRY).getValue());
+        LOG.info("repository value: "+packageConfiguration.get(Constants.REPOSITORY).getValue());
+
         try {
             GetMethod get = new GetMethod(repository);
             if (client.executeMethod(get) == HttpStatus.SC_OK) {
                 String jsonString = get.getResponseBodyAsString();
                 LOG.info("RECIEVED: " + jsonString);
-                result = (JsonObject) new JsonParser().parse(jsonString);
+                result = (JsonArray) ((JsonObject) new JsonParser().parse(jsonString)).get("tags");
+                LOG.info("Build result: "+result);
             }
         } catch (IOException e) {
             // Wrap into a runtime. There is nothing useful to do here
             // when this happens.
+            LOG.error("cannot fetch the tags from "+repository);
             throw new RuntimeException("Cannot fetch the tags from " + repository, e);
         }
 

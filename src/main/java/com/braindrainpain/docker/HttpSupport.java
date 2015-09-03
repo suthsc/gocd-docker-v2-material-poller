@@ -32,7 +32,8 @@ import org.apache.commons.httpclient.params.HttpConnectionParams;
  * @author Jan De Cooman
  */
 public class HttpSupport {
-    
+
+    //TODO: move this to a composited client and use mockito to test it. http://stackoverflow.com/questions/20563839/using-mockito-for-http-client
     protected HttpClient getHttpClient() {
         HttpClient client = new HttpClient();
         

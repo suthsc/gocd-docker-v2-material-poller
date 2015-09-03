@@ -32,7 +32,7 @@ package com.braindrainpain.docker;
  */
 public enum DockerAPI {
     
-    V1("{0}/v1/repositories/{1}/tags");
+    V2("{0}/v2/{1}/tags/list");
     
     private final String url;
 

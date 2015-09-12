@@ -23,6 +23,7 @@ SOFTWARE.
  */
 package com.braindrainpain.docker;
 
+import com.braindrainpain.docker.httpsupport.HttpClientService;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -44,9 +45,11 @@ import java.util.Iterator;
  */
 public class DockerRepository extends HttpSupport {
 
-    final private static Logger LOG = Logger.getLoggerFor(DockerRepository.class);
+    private static final Logger LOG = Logger.getLoggerFor(DockerRepository.class);
 
-    final private RepositoryConfiguration repositoryConfiguration;
+    private final RepositoryConfiguration repositoryConfiguration;
+
+    private final HttpClientService httpClientService = new HttpClientService();
 
     private DockerRepository(final RepositoryConfiguration repositoryConfiguration) {
         this.repositoryConfiguration = repositoryConfiguration;
@@ -85,6 +88,7 @@ public class DockerRepository extends HttpSupport {
     private JsonArray allTags(final PackageConfiguration packageConfiguration) {
         JsonArray result = null;
         HttpClient client = super.getHttpClient();
+
 
         LOG.info("allTags is called");
 

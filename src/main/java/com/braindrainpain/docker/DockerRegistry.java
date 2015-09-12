@@ -23,16 +23,13 @@ SOFTWARE.
  */
 package com.braindrainpain.docker;
 
+import com.braindrainpain.docker.httpsupport.HttpClientService;
 import com.thoughtworks.go.plugin.api.config.Property;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.material.packagerepository.RepositoryConfiguration;
 import com.thoughtworks.go.plugin.api.response.validation.ValidationError;
 import com.thoughtworks.go.plugin.api.response.validation.ValidationResult;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringUtils;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -43,13 +40,13 @@ import java.util.List;
  *
  * @author Jan De Cooman
  */
-public class DockerRegistry extends HttpSupport {
+public class DockerRegistry  {
 
-    final private Logger LOG = Logger.getLoggerFor(DockerRegistry.class);
+    private final String url;
 
-    final private String url;
+    private static final List<String> protocols = new ArrayList<>(2);
 
-    final private static List<String> protocols = new ArrayList<>(2);
+    private final HttpClientService httpClientService = new HttpClientService();
 
     /**
      * Supported protocols.
@@ -107,21 +104,7 @@ public class DockerRegistry extends HttpSupport {
      * Checks the connection to the registry
      */
     public void checkConnection() {
-        LOG.debug("Checking: '" + url + "'");
-        HttpClient client = getHttpClient();
-        GetMethod method = new GetMethod(url);
-        method.setFollowRedirects(false);
-        try {
-            int returnCode = client.executeMethod(method);
-            if (returnCode != HttpStatus.SC_OK) {
-                LOG.error("Not ok from: '" + url + "'");
-                LOG.error("status: "+returnCode);
-                throw new RuntimeException("Not ok from: '" + url +"'");
-            }
-        } catch (IOException e) {
-            LOG.error("Error connecting to: '" + url + "'");
-            throw new RuntimeException("Error connecting to: '" + url +"'");
-        }
+        httpClientService.checkConnection(url);
     }
 
     public String getUrl() {

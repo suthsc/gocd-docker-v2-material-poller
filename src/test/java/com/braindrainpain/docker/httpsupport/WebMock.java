@@ -44,13 +44,8 @@ public class WebMock {
         } catch (IOException e) {
             LOG.error("can't create http server");
         }
-        HttpContext context = server.createContext("/", handler);
-
-//        context.getFilters().add(new ParameterFilter());
+        server.createContext("/", handler);
         server.setExecutor(Executors.newCachedThreadPool());
-        LOG.info("Server created");
-
-
     }
 
     public void start() {

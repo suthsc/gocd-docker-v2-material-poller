@@ -26,13 +26,21 @@ package com.braindrainpain.docker;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageConfiguration;
 import com.thoughtworks.go.plugin.api.material.packagerepository.RepositoryConfiguration;
 import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Manuel Kasiske
  */
-public class DockerMaterialConfigurationTest extends TestCase {
+@RunWith(MockitoJUnitRunner.class)
+public class DockerMaterialConfigurationTest {
 
 
+    @Test
     public void testValidationWithDefaultRepositoryConfigurationShouldFail() {
         DockerMaterialConfiguration dockerMaterialConfiguration = new DockerMaterialConfiguration();
         RepositoryConfiguration repositoryConfiguration = dockerMaterialConfiguration.getRepositoryConfiguration();
@@ -40,6 +48,7 @@ public class DockerMaterialConfigurationTest extends TestCase {
         assertFalse(dockerMaterialConfiguration.isRepositoryConfigurationValid(repositoryConfiguration).isSuccessful());
     }
 
+    @Test
     public void testValidationWithDefaultPackageConfigurationShouldFail() {
         DockerMaterialConfiguration dockerMaterialConfiguration = new DockerMaterialConfiguration();
         RepositoryConfiguration repositoryConfiguration = dockerMaterialConfiguration.getRepositoryConfiguration();
@@ -48,7 +57,7 @@ public class DockerMaterialConfigurationTest extends TestCase {
         assertFalse(dockerMaterialConfiguration.isPackageConfigurationValid(packageConfiguration, repositoryConfiguration).isSuccessful());
     }
 
-
+    @Test
     public void testValidationOfRepositoryConfiguration() {
         DockerMaterialConfiguration dockerMaterialConfiguration = new DockerMaterialConfiguration();
         RepositoryConfiguration repositoryConfiguration = dockerMaterialConfiguration.getRepositoryConfiguration();
@@ -57,7 +66,7 @@ public class DockerMaterialConfigurationTest extends TestCase {
         assertTrue(dockerMaterialConfiguration.isRepositoryConfigurationValid(repositoryConfiguration).isSuccessful());
     }
 
-
+    @Test
     public void testValidationOfPackageConfiguration() {
         DockerMaterialConfiguration dockerMaterialConfiguration = new DockerMaterialConfiguration();
         RepositoryConfiguration repositoryConfiguration = dockerMaterialConfiguration.getRepositoryConfiguration();

@@ -29,38 +29,42 @@ import com.thoughtworks.go.plugin.api.material.packagerepository.PackageConfigur
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageMaterialProperty;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
 import com.thoughtworks.go.plugin.api.material.packagerepository.RepositoryConfiguration;
-import junit.framework.TestCase;
-
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Date;
-
 import static com.thoughtworks.go.plugin.api.config.Property.*;
+import static org.junit.Assert.*;
 
 /**
  * @author Manuel Kasiske
  */
-public class DockerMaterialPollerTest extends TestCase {
+@RunWith(MockitoJUnitRunner.class)
+public class DockerMaterialPollerTest {
 
     private WebMock webMock;
     private DockerMaterialPoller dockerMaterialPoller = new DockerMaterialPoller();
 
-
+    @Before
     public void setUp() {
         DockerApiHttpHandler handler = new DockerApiHttpHandler();
         webMock = new WebMock(handler, 5000);
         webMock.start();
     }
 
+    @After
     public void tearDown() {
         webMock.stop();
     }
 
-
+    @Test
     public void testRepositoryConfigurationShouldCheckedSuccessfully() {
         RepositoryConfiguration repositoryConfiguration = getRepositoryConfiguration();
 
         assertTrue(dockerMaterialPoller.checkConnectionToRepository(repositoryConfiguration).isSuccessful());
     }
 
+    @Test
     public void testPackageConfigurationShouldCheckedSuccessfully() {
         RepositoryConfiguration repositoryConfiguration = getRepositoryConfiguration();
         PackageConfiguration packageConfiguration = getPackageConfiguration();
@@ -68,6 +72,7 @@ public class DockerMaterialPollerTest extends TestCase {
         assertTrue(dockerMaterialPoller.checkConnectionToPackage(packageConfiguration, repositoryConfiguration).isSuccessful());
     }
 
+    @Test
     public void testGetLatestRevisionShouldBeReturnLatest() {
         RepositoryConfiguration repositoryConfiguration = getRepositoryConfiguration();
         PackageConfiguration packageConfiguration = getPackageConfiguration();
@@ -75,6 +80,7 @@ public class DockerMaterialPollerTest extends TestCase {
         assertEquals("latest", dockerMaterialPoller.getLatestRevision(packageConfiguration, repositoryConfiguration).getRevision());
     }
 
+    @Test
     public void testGetLatestRevisionWithWrongRepositoryShouldFailWithNullPointerException() {
         RepositoryConfiguration repositoryConfiguration = getRepositoryConfiguration();
         PackageConfiguration packageConfiguration = getPackageConfiguration();
@@ -88,7 +94,7 @@ public class DockerMaterialPollerTest extends TestCase {
         }
     }
 
-
+    @Test
     public void testLatestModificationSince() {
         RepositoryConfiguration repositoryConfiguration = getRepositoryConfiguration();
         PackageConfiguration packageConfiguration = getPackageConfiguration();

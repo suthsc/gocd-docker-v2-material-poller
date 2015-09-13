@@ -34,21 +34,22 @@ import java.text.MessageFormat;
 /**
  * @author Manuel Kasiske
  */
-public class DockerApiHttpHandler implements HttpHandler{
+public class DockerApiHttpHandler implements HttpHandler {
 
 
     protected final static String DUMMY_JSON_SUCCESS_RESPONSE = "{\"name\":\"pharmacy-service\",\"tags\":[\"3\",\"1\",\"latest\",\"2\"]}";
-    protected final static String DUMMY_DEFAULT_DOCKER_API_URL = MessageFormat.format(DockerAPI.V2.getUrl(),"http://localhost:5000","pharmacy-service");
+    protected final static String EMPTY_JSON_RESPONSE = "{}";
+    protected final static String DUMMY_TAGS_DOCKER_API_URL = MessageFormat.format(DockerAPI.V2.getUrl(),"http://localhost:5000","pharmacy-service");
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
 
-        final URL defaultUrl = new URL(DUMMY_DEFAULT_DOCKER_API_URL);
+        final URL tagsUrl = new URL(DUMMY_TAGS_DOCKER_API_URL);
 
-        if(httpExchange.getRequestURI().toString().equals(defaultUrl.getPath())) {
+        if(httpExchange.getRequestURI().toString().equals(tagsUrl.getPath())) {
             sendMessage(httpExchange, DUMMY_JSON_SUCCESS_RESPONSE);
         } else if(httpExchange.getRequestURI().toString().equals("/v2/")){
-            sendMessage(httpExchange, "{}");
+            sendMessage(httpExchange, EMPTY_JSON_RESPONSE);
         } else {
             sendError(httpExchange, "404 page not found");
         }

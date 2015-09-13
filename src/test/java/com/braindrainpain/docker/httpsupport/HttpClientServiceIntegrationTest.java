@@ -65,7 +65,7 @@ public class HttpClientServiceIntegrationTest {
     }
 
     @Test
-    public void testRequestDockerApiWithoutContextShouldReturn404() throws IOException {
+    public void testCheckConnectionShouldReturnStatus404() throws IOException {
         try {
             httpClientService.checkConnection("http://localhost:5000/");
             fail();
@@ -75,9 +75,16 @@ public class HttpClientServiceIntegrationTest {
     }
 
     @Test
-    public void testRequestDockerApiWithRightContextShouldReturnJsonResponseWithStatus200() throws IOException {
-        httpClientService.checkConnection("http://localhost:5000/v2/pharmacy-service/tags/list");
+    public void testCheckConnectionWithTagsUrlShouldReturnFullyJsonResponse() throws IOException {
+        httpClientService.checkConnection(DockerApiHttpHandler.DUMMY_TAGS_DOCKER_API_URL);
         assertEquals(DockerApiHttpHandler.DUMMY_JSON_SUCCESS_RESPONSE, getMethod.getResponseBodyAsString());
+        assertEquals(200, getMethod.getStatusCode());
+    }
+
+    @Test
+    public void testCheckConnectionWithDefaultUrlShouldReturnEmptyJson() throws IOException {
+        httpClientService.checkConnection("http://localhost:5000/v2/");
+        assertEquals(DockerApiHttpHandler.EMPTY_JSON_RESPONSE, getMethod.getResponseBodyAsString());
         assertEquals(200, getMethod.getStatusCode());
     }
 

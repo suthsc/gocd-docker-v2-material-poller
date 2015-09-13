@@ -26,34 +26,45 @@ package com.braindrainpain.docker;
 import com.braindrainpain.docker.httpsupport.DockerApiHttpHandler;
 import com.braindrainpain.docker.httpsupport.WebMock;
 import com.thoughtworks.go.plugin.api.response.validation.ValidationResult;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author Manuel Kasiske
  */
-public class DockerRegistryTest extends TestCase {
+@RunWith(MockitoJUnitRunner.class)
+public class DockerRegistryTest {
 
     private WebMock webMock;
 
     private DockerRegistry dockerRegistry;
 
+    @Before
     public void setUp() {
         DockerApiHttpHandler handler = new DockerApiHttpHandler();
         webMock = new WebMock(handler, 5000);
         webMock.start();
     }
 
+    @After
     public void tearDown() {
         webMock.stop();
     }
 
-
+    @Test
     public void testGetInstanceWithPlainUrlShouldDeliverV2ApiExtension() {
         dockerRegistry = DockerRegistry.getInstance("http://www.anyDomain.de");
 
         assertEquals("http://www.anyDomain.de/v2/", dockerRegistry.getUrl());
     }
 
+    @Test
     public void testValidateShouldBeSuccessful() {
         dockerRegistry = DockerRegistry.getInstance("http://www.anyDomain.de");
         ValidationResult validationResult = new ValidationResult();
@@ -62,6 +73,7 @@ public class DockerRegistryTest extends TestCase {
         assertEquals(0, validationResult.getErrors().size());
     }
 
+    @Test
     public void testValidateWithEmptyUrlShouldFail() {
         dockerRegistry = DockerRegistry.getInstance("");
         ValidationResult validationResult = new ValidationResult();
@@ -70,6 +82,7 @@ public class DockerRegistryTest extends TestCase {
         assertEquals(1, validationResult.getErrors().size());
     }
 
+    @Test
     public void testValidateWithUnsupportedProtocolShouldFail() {
         dockerRegistry = DockerRegistry.getInstance("htty://www.anyDomain.de");
         ValidationResult validationResult = new ValidationResult();
@@ -77,6 +90,7 @@ public class DockerRegistryTest extends TestCase {
         assertEquals(1, validationResult.getErrors().size());
     }
 
+    @Test
     public void testValidateWithWrongUrlShouldFail() {
         dockerRegistry = DockerRegistry.getInstance("anyDomain.de");
         ValidationResult validationResult = new ValidationResult();
@@ -85,6 +99,7 @@ public class DockerRegistryTest extends TestCase {
         assertEquals(1, validationResult.getErrors().size());
     }
 
+    @Test
     public void testCheckConnectionShouldFailWithWrongRegistryUrl() {
         dockerRegistry = DockerRegistry.getInstance("http://www.anyDomain.de");
         try {
@@ -95,6 +110,7 @@ public class DockerRegistryTest extends TestCase {
         }
     }
 
+    @Test
     public void testCheckConnectionShouldSucceed() {
         dockerRegistry = DockerRegistry.getInstance("http://localhost:5000");
         try {

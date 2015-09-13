@@ -23,11 +23,13 @@ SOFTWARE.
  */
 package com.braindrainpain.docker.httpsupport;
 
+import com.braindrainpain.docker.DockerAPI;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URL;
+import java.text.MessageFormat;
 
 /**
  * @author Manuel Kasiske
@@ -35,14 +37,20 @@ import java.io.OutputStream;
 public class DockerApiHttpHandler implements HttpHandler{
 
 
-    protected final static String DUMMY_JSON_SUCCESS_RESPONSE = "{\"name\":\"pharmacy-service\",\"tags\":[\"327\",\"347\",\"latest\"]}";
+    protected final static String DUMMY_JSON_SUCCESS_RESPONSE = "{\"name\":\"pharmacy-service\",\"tags\":[\"3\",\"1\",\"latest\",\"2\"]}";
+    protected final static String DUMMY_DEFAULT_DOCKER_API_URL = MessageFormat.format(DockerAPI.V2.getUrl(),"http://localhost:5000","pharmacy-service");
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        if(httpExchange.getRequestURI().toString().equals("/v2/pharmacy-service/tags/list")) {
+
+        final URL defaultUrl = new URL(DUMMY_DEFAULT_DOCKER_API_URL);
+
+        if(httpExchange.getRequestURI().toString().equals(defaultUrl.getPath())) {
             sendMessage(httpExchange, DUMMY_JSON_SUCCESS_RESPONSE);
+        } else if(httpExchange.getRequestURI().toString().equals("/v2/")){
+            sendMessage(httpExchange, "{}");
         } else {
-            sendError(httpExchange, "404");
+            sendError(httpExchange, "404 page not found");
         }
     }
 

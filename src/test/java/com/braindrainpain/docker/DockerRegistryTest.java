@@ -23,6 +23,8 @@ SOFTWARE.
  */
 package com.braindrainpain.docker;
 
+import com.braindrainpain.docker.httpsupport.DockerApiHttpHandler;
+import com.braindrainpain.docker.httpsupport.WebMock;
 import com.thoughtworks.go.plugin.api.response.validation.ValidationResult;
 import junit.framework.TestCase;
 
@@ -31,16 +33,29 @@ import junit.framework.TestCase;
  */
 public class DockerRegistryTest extends TestCase {
 
+    private WebMock webMock;
+
     private DockerRegistry dockerRegistry;
 
-    public void testGetInstanceWithPlainUrlShouldDeliverV2ApiExtension() {
-        dockerRegistry = DockerRegistry.getInstance("http://www.google.de");
+    public void setUp() {
+        DockerApiHttpHandler handler = new DockerApiHttpHandler();
+        webMock = new WebMock(handler, 5000);
+        webMock.start();
+    }
 
-        assertEquals("http://www.google.de/v2/", dockerRegistry.getUrl());
+    public void tearDown() {
+        webMock.stop();
+    }
+
+
+    public void testGetInstanceWithPlainUrlShouldDeliverV2ApiExtension() {
+        dockerRegistry = DockerRegistry.getInstance("http://www.anyDomain.de");
+
+        assertEquals("http://www.anyDomain.de/v2/", dockerRegistry.getUrl());
     }
 
     public void testValidateShouldBeSuccessful() {
-        dockerRegistry = DockerRegistry.getInstance("http://www.google.de");
+        dockerRegistry = DockerRegistry.getInstance("http://www.anyDomain.de");
         ValidationResult validationResult = new ValidationResult();
         dockerRegistry.validate(validationResult);
 
@@ -56,14 +71,14 @@ public class DockerRegistryTest extends TestCase {
     }
 
     public void testValidateWithUnsupportedProtocolShouldFail() {
-        dockerRegistry = DockerRegistry.getInstance("htty://www.google.de");
+        dockerRegistry = DockerRegistry.getInstance("htty://www.anyDomain.de");
         ValidationResult validationResult = new ValidationResult();
         dockerRegistry.validate(validationResult);
         assertEquals(1, validationResult.getErrors().size());
     }
 
     public void testValidateWithWrongUrlShouldFail() {
-        dockerRegistry = DockerRegistry.getInstance("google.de");
+        dockerRegistry = DockerRegistry.getInstance("anyDomain.de");
         ValidationResult validationResult = new ValidationResult();
         dockerRegistry.validate(validationResult);
 
@@ -71,8 +86,7 @@ public class DockerRegistryTest extends TestCase {
     }
 
     public void testCheckConnectionShouldFailWithWrongRegistryUrl() {
-        //TODO: mock delivery.wub
-        dockerRegistry = DockerRegistry.getInstance("http://www.google.de");
+        dockerRegistry = DockerRegistry.getInstance("http://www.anyDomain.de");
         try {
             dockerRegistry.checkConnection();
             fail();
@@ -82,16 +96,12 @@ public class DockerRegistryTest extends TestCase {
     }
 
     public void testCheckConnectionShouldSucceed() {
-        //TODO: mock delivery.wub
-        dockerRegistry = DockerRegistry.getInstance("http://delivery.wub:5000");
+        dockerRegistry = DockerRegistry.getInstance("http://localhost:5000");
         try {
             dockerRegistry.checkConnection();
         } catch (RuntimeException e) {
             fail();
         }
     }
-
-
-
 
 }

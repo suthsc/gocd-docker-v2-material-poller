@@ -70,7 +70,7 @@ public class HttpClientServiceIntegrationTest {
             httpClientService.checkConnection("http://localhost:5000/");
             fail();
         } catch (RuntimeException e) {}
-        assertEquals("404", getMethod.getResponseBodyAsString());
+        assertEquals("404 page not found", getMethod.getResponseBodyAsString());
         assertEquals(404, getMethod.getStatusCode());
     }
 

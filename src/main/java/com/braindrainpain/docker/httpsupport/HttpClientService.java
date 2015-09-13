@@ -23,11 +23,16 @@ SOFTWARE.
  */
 package com.braindrainpain.docker.httpsupport;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpConnectionParams;
+
 import java.io.IOException;
 
 /**
@@ -40,24 +45,13 @@ public class HttpClientService {
     private final GetMethod getMethod;
 
     public HttpClientService() {
-        httpClient = new HttpClient();
+        httpClient = createHttpClient();
         getMethod = new GetMethod();
     }
 
     protected HttpClientService(HttpClient httpClient, GetMethod getMethod) {
         this.httpClient = httpClient;
         this.getMethod = getMethod;
-    }
-
-    public String doGet(String url) throws IOException {
-        URI uri = new URI(url, false);
-        this.getMethod.setURI(uri);
-        final int status = httpClient.executeMethod(getMethod);
-        if (status != HttpStatus.SC_OK) {
-            LOG.error("cannot connect to url " + url);
-            throw new IOException("cannot connect to url " + url);
-        }
-        return getMethod.getResponseBodyAsString();
     }
 
     public void checkConnection(String url) {
@@ -75,6 +69,60 @@ public class HttpClientService {
         } catch (IOException e) {
             LOG.error("Error connecting to: '" + url + "'");
             throw new RuntimeException("Error connecting to: '" + url + "'");
+        }
+    }
+
+    public String doGet(String url) throws IOException {
+        URI uri = new URI(url, false);
+        this.getMethod.setURI(uri);
+        final int status = httpClient.executeMethod(getMethod);
+        if (status != HttpStatus.SC_OK) {
+            LOG.error("cannot connect to url " + url);
+            throw new IOException("cannot connect to url " + url);
+        }
+        return getMethod.getResponseBodyAsString();
+    }
+
+
+    public JsonArray getJsonElements(String url) {
+        JsonArray result = null;
+        try {
+            GetMethod get = new GetMethod(url);
+            if (httpClient.executeMethod(get) == HttpStatus.SC_OK) {
+                String jsonString = get.getResponseBodyAsString();
+                LOG.info("RECIEVED: " + jsonString);
+                result = (JsonArray) ((JsonObject) new JsonParser().parse(jsonString)).get("tags");
+                LOG.info("Build result: "+result);
+            }
+        } catch (IOException e) {
+            // Wrap into a runtime. There is nothing useful to do here
+            // when this happens.
+            LOG.error("cannot fetch the tags from "+url);
+            throw new RuntimeException("Cannot fetch the tags from " + url, e);
+        }
+
+        return result;
+    }
+
+
+    private HttpClient createHttpClient() {
+        HttpClient client = new HttpClient();
+
+        client.getParams().setIntParameter(
+                HttpConnectionParams.CONNECTION_TIMEOUT,
+                this.getSystemProperty("docker.repo.connection.timeout", 10 * 1000));
+
+        client.getParams().setSoTimeout(
+                this.getSystemProperty("docker.repo.socket.timeout", 5 * 60 * 1000));
+
+        return client;
+    }
+
+    private int getSystemProperty(final String key, final int defaultValue) {
+        try {
+            return Integer.parseInt(System.getProperty(key));
+        } catch (NumberFormatException e) {
+            return defaultValue;
         }
     }
 

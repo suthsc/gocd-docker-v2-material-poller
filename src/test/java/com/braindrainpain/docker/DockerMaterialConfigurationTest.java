@@ -52,7 +52,7 @@ public class DockerMaterialConfigurationTest extends TestCase {
     public void testValidationOfRepositoryConfiguration() {
         DockerMaterialConfiguration dockerMaterialConfiguration = new DockerMaterialConfiguration();
         RepositoryConfiguration repositoryConfiguration = dockerMaterialConfiguration.getRepositoryConfiguration();
-        repositoryConfiguration.get(Constants.REGISTRY).withDefault("http://www.google.de");
+        repositoryConfiguration.get(Constants.REGISTRY).withDefault("http://www.anyDomain.de");
 
         assertTrue(dockerMaterialConfiguration.isRepositoryConfigurationValid(repositoryConfiguration).isSuccessful());
     }
@@ -61,7 +61,7 @@ public class DockerMaterialConfigurationTest extends TestCase {
     public void testValidationOfPackageConfiguration() {
         DockerMaterialConfiguration dockerMaterialConfiguration = new DockerMaterialConfiguration();
         RepositoryConfiguration repositoryConfiguration = dockerMaterialConfiguration.getRepositoryConfiguration();
-        repositoryConfiguration.get(Constants.REGISTRY).withDefault("http://www.google.de");
+        repositoryConfiguration.get(Constants.REGISTRY).withDefault("http://www.anyDomain.de");
         PackageConfiguration packageConfiguration = dockerMaterialConfiguration.getPackageConfiguration();
         packageConfiguration.get(Constants.REPOSITORY).withDefault("abc");
 

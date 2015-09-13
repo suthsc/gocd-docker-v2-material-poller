@@ -26,15 +26,10 @@ package com.braindrainpain.docker;
 import com.braindrainpain.docker.httpsupport.HttpClientService;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageConfiguration;
 import com.thoughtworks.go.plugin.api.material.packagerepository.RepositoryConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import java.io.IOException;
+
 import java.text.MessageFormat;
 import java.util.Iterator;
 
@@ -43,7 +38,7 @@ import java.util.Iterator;
  *
  * @author Jan De Cooman
  */
-public class DockerRepository extends HttpSupport {
+public class DockerRepository {
 
     private static final Logger LOG = Logger.getLoggerFor(DockerRepository.class);
 
@@ -61,7 +56,7 @@ public class DockerRepository extends HttpSupport {
 
     public DockerTag getLatestRevision(final PackageConfiguration packageConfiguration) {
         String tagName = packageConfiguration.get(Constants.TAG).getValue();
-        JsonArray jsonTags = this.allTags(packageConfiguration);
+        JsonArray jsonTags = getAllTags(packageConfiguration);
         return this.getLatestTag(jsonTags, tagName);
     }
 
@@ -85,38 +80,18 @@ public class DockerRepository extends HttpSupport {
      * @param packageConfiguration
      * @return 
      */
-    private JsonArray allTags(final PackageConfiguration packageConfiguration) {
-        JsonArray result = null;
-        HttpClient client = super.getHttpClient();
-
-
-        LOG.info("allTags is called");
-
+    private JsonArray getAllTags(final PackageConfiguration packageConfiguration) {
+        JsonArray result;
+        LOG.info("getAllTags is called");
         String repository = MessageFormat.format(DockerAPI.V2.getUrl(),
                 repositoryConfiguration.get(Constants.REGISTRY).getValue(),
                 packageConfiguration.get(Constants.REPOSITORY).getValue());
-
         LOG.info("repository: "+repository);
-        LOG.info("docker api url: "+DockerAPI.V2.getUrl());
-        LOG.info("registry value: "+repositoryConfiguration.get(Constants.REGISTRY).getValue());
-        LOG.info("repository value: "+packageConfiguration.get(Constants.REPOSITORY).getValue());
-
-        try {
-            GetMethod get = new GetMethod(repository);
-            if (client.executeMethod(get) == HttpStatus.SC_OK) {
-                String jsonString = get.getResponseBodyAsString();
-                LOG.info("RECIEVED: " + jsonString);
-                result = (JsonArray) ((JsonObject) new JsonParser().parse(jsonString)).get("tags");
-                LOG.info("Build result: "+result);
-            }
-        } catch (IOException e) {
-            // Wrap into a runtime. There is nothing useful to do here
-            // when this happens.
-            LOG.error("cannot fetch the tags from "+repository);
-            throw new RuntimeException("Cannot fetch the tags from " + repository, e);
-        }
+        result = httpClientService.getJsonElements(repository);
 
         return result;
     }
+
+
 
 }

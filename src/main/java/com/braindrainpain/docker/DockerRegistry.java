@@ -62,6 +62,7 @@ public class DockerRegistry  {
      * @param url RegistryURL
      */
     private DockerRegistry(final String url) {
+        //TODO: try to let user configure the first matching sc ok status uri!
         this.url = url + "/v2/";
     }
 
@@ -89,11 +90,13 @@ public class DockerRegistry  {
             }
             URL validatedUrl = new URL(this.url);
             if (!protocols.contains(validatedUrl.getProtocol())) {
-                validationResult.addError(new ValidationError(Constants.REGISTRY, "Invalid URL: Only 'http' and 'https' protocols are supported."));
+                validationResult.addError(new ValidationError(Constants.REGISTRY,
+                        "Invalid URL: Only 'http' and 'https' protocols are supported."));
             }
 
             if (StringUtils.isNotBlank(validatedUrl.getUserInfo())) {
-                validationResult.addError(new ValidationError(Constants.REGISTRY, "User info should not be provided as part of the URL. Please provide credentials using USERNAME and PASSWORD configuration keys."));
+                validationResult.addError(new ValidationError(Constants.REGISTRY,
+                        "User info should not be provided as part of the URL. Please provide credentials using USERNAME and PASSWORD configuration keys."));
             }
         } catch (MalformedURLException e) {
             validationResult.addError(new ValidationError(Constants.REGISTRY, "Invalid URL : " + url));

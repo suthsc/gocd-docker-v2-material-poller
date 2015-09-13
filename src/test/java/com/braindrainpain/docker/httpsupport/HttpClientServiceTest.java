@@ -57,7 +57,7 @@ public class HttpClientServiceTest {
     @InjectMocks
     private HttpClientService httpClientService;
 
-    public static final String URL = "http://www.google.de";
+    public static final String URL = "http://www.anyDomain.de";
 
     @Before
     public void setup() {

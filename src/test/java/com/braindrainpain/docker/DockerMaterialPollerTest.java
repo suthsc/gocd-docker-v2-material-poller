@@ -23,6 +23,8 @@ SOFTWARE.
  */
 package com.braindrainpain.docker;
 
+import com.braindrainpain.docker.httpsupport.DockerApiHttpHandler;
+import com.braindrainpain.docker.httpsupport.WebMock;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageConfiguration;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageMaterialProperty;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
@@ -38,7 +40,20 @@ import static com.thoughtworks.go.plugin.api.config.Property.*;
  */
 public class DockerMaterialPollerTest extends TestCase {
 
+    private WebMock webMock;
     private DockerMaterialPoller dockerMaterialPoller = new DockerMaterialPoller();
+
+
+    public void setUp() {
+        DockerApiHttpHandler handler = new DockerApiHttpHandler();
+        webMock = new WebMock(handler, 5000);
+        webMock.start();
+    }
+
+    public void tearDown() {
+        webMock.stop();
+    }
+
 
     public void testRepositoryConfigurationShouldCheckedSuccessfully() {
         RepositoryConfiguration repositoryConfiguration = getRepositoryConfiguration();
@@ -97,8 +112,7 @@ public class DockerMaterialPollerTest extends TestCase {
         RepositoryConfiguration repositoryConfiguration = new RepositoryConfiguration();
         repositoryConfiguration.add(new PackageMaterialProperty(Constants.REGISTRY).
                 with(DISPLAY_NAME, "Registry URL").with(DISPLAY_ORDER, 0));
-        //TODO: mock delivery.wub
-        repositoryConfiguration.get(Constants.REGISTRY).withDefault("http://delivery.wub:5000");
+        repositoryConfiguration.get(Constants.REGISTRY).withDefault("http://localhost:5000");
         return repositoryConfiguration;
     }
 

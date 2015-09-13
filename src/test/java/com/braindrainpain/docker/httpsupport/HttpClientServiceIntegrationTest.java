@@ -25,7 +25,6 @@ package com.braindrainpain.docker.httpsupport;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,6 +75,17 @@ public class HttpClientServiceIntegrationTest extends WebMockTest {
         httpClientService.checkConnection("http://localhost:5000/v2/");
         assertEquals(DockerApiHttpHandler.EMPTY_JSON_RESPONSE, getMethod.getResponseBodyAsString());
         assertEquals(200, getMethod.getStatusCode());
+    }
+
+    @Test
+    public void testCheckConnectionWithTagUrlAndUnknownServiceShouldReturnErrorJson() throws IOException {
+        try{
+            httpClientService.checkConnection("http://localhost:5000/v2/abc/tags/list");
+            fail();
+        } catch (RuntimeException e) {}
+
+        assertEquals(DockerApiHttpHandler.DUMMY_ERROR_MESSAGE, getMethod.getResponseBodyAsString());
+        assertEquals(404, getMethod.getStatusCode());
     }
 
 }

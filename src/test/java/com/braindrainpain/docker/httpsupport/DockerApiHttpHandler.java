@@ -40,6 +40,7 @@ public class DockerApiHttpHandler implements HttpHandler {
     protected final static String DUMMY_JSON_SUCCESS_RESPONSE = "{\"name\":\"pharmacy-service\",\"tags\":[\"3\",\"1\",\"latest\",\"2\"]}";
     protected final static String EMPTY_JSON_RESPONSE = "{}";
     protected final static String DUMMY_TAGS_DOCKER_API_URL = MessageFormat.format(DockerAPI.V2.getUrl(),"http://localhost:5000","pharmacy-service");
+    protected final static String DUMMY_ERROR_MESSAGE = "{\"errors\":[{\"code\":\"NAME_UNKNOWN\",\"message\":\"repository name not known to registry\",\"detail\":{\"name\":\"{0}\"}}]}";
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
@@ -50,6 +51,8 @@ public class DockerApiHttpHandler implements HttpHandler {
             sendMessage(httpExchange, DUMMY_JSON_SUCCESS_RESPONSE);
         } else if(httpExchange.getRequestURI().toString().equals("/v2/")){
             sendMessage(httpExchange, EMPTY_JSON_RESPONSE);
+        } else if(httpExchange.getRequestURI().toString().matches("^/v2/[a-z]++/tags/list")) {
+            sendError(httpExchange, DUMMY_ERROR_MESSAGE);
         } else {
             sendError(httpExchange, "404 page not found");
         }

@@ -40,28 +40,18 @@ import static org.junit.Assert.fail;
  * @author Manuel Kasiske
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpClientServiceIntegrationTest {
+public class HttpClientServiceIntegrationTest extends WebMockTest {
 
     private HttpClient httpClient;
     private GetMethod getMethod;
     private HttpClientService httpClientService;
-    private DockerApiHttpHandler handler;
-    private WebMock webMock;
 
     @Before
     public void setUp() {
-        handler = new DockerApiHttpHandler();
-        webMock = new WebMock(handler, 5000);
+        super.setUp();
         httpClient = new HttpClient();
         getMethod = new GetMethod();
         httpClientService = new HttpClientService(httpClient, getMethod);
-
-        webMock.start();
-    }
-
-    @After
-    public void tearDown() {
-        webMock.stop();
     }
 
     @Test

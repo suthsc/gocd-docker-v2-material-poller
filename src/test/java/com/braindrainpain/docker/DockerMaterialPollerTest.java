@@ -23,39 +23,23 @@ SOFTWARE.
  */
 package com.braindrainpain.docker;
 
-import com.braindrainpain.docker.httpsupport.DockerApiHttpHandler;
-import com.braindrainpain.docker.httpsupport.WebMock;
+import com.braindrainpain.docker.httpsupport.WebMockTest;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageConfiguration;
-import com.thoughtworks.go.plugin.api.material.packagerepository.PackageMaterialProperty;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
 import com.thoughtworks.go.plugin.api.material.packagerepository.RepositoryConfiguration;
-import org.junit.*;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Date;
-import static com.thoughtworks.go.plugin.api.config.Property.*;
 import static org.junit.Assert.*;
 
 /**
  * @author Manuel Kasiske
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DockerMaterialPollerTest {
+public class DockerMaterialPollerTest extends WebMockTest {
 
-    private WebMock webMock;
     private DockerMaterialPoller dockerMaterialPoller = new DockerMaterialPoller();
-
-    @Before
-    public void setUp() {
-        DockerApiHttpHandler handler = new DockerApiHttpHandler();
-        webMock = new WebMock(handler, 5000);
-        webMock.start();
-    }
-
-    @After
-    public void tearDown() {
-        webMock.stop();
-    }
 
     @Test
     public void testRepositoryConfigurationShouldCheckedSuccessfully() {
@@ -99,25 +83,21 @@ public class DockerMaterialPollerTest {
         RepositoryConfiguration repositoryConfiguration = getRepositoryConfiguration();
         PackageConfiguration packageConfiguration = getPackageConfiguration();
         PackageRevision packageRevision = new PackageRevision("x", new Date(), "docker");
-
         PackageRevision latest = dockerMaterialPoller.latestModificationSince(packageConfiguration, repositoryConfiguration, packageRevision);
+
         assertNotNull(latest);
     }
 
     private PackageConfiguration getPackageConfiguration() {
-        PackageConfiguration packageConfiguration = new PackageConfiguration();
-        packageConfiguration.add(new PackageMaterialProperty(Constants.REPOSITORY).
-                with(DISPLAY_NAME, "Image").with(DISPLAY_ORDER, 0));
-        packageConfiguration.add(new PackageMaterialProperty(Constants.TAG, "latest").
-                with(REQUIRED, false).with(DISPLAY_NAME, "Tag").with(DISPLAY_ORDER, 1));
+        DockerMaterialConfiguration dockerMaterialConfiguration = new DockerMaterialConfiguration();
+        PackageConfiguration packageConfiguration = dockerMaterialConfiguration.getPackageConfiguration();
         packageConfiguration.get(Constants.REPOSITORY).withDefault("pharmacy-service");
         return packageConfiguration;
     }
 
     private RepositoryConfiguration getRepositoryConfiguration() {
-        RepositoryConfiguration repositoryConfiguration = new RepositoryConfiguration();
-        repositoryConfiguration.add(new PackageMaterialProperty(Constants.REGISTRY).
-                with(DISPLAY_NAME, "Registry URL").with(DISPLAY_ORDER, 0));
+        DockerMaterialConfiguration dockerMaterialConfiguration = new DockerMaterialConfiguration();
+        RepositoryConfiguration repositoryConfiguration = dockerMaterialConfiguration.getRepositoryConfiguration();
         repositoryConfiguration.get(Constants.REGISTRY).withDefault("http://localhost:5000");
         return repositoryConfiguration;
     }

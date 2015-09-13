@@ -149,10 +149,7 @@ public class DockerMaterialPoller implements PackageMaterialPoller {
 
         LOG.info("validate repository is called");
         ValidationResult validationResult = new DockerMaterialConfiguration().isRepositoryConfigurationValid(repositoryConfiguration);
-        if (!validationResult.isSuccessful()) {
-            return new Result().withErrorMessages(validationResult.getMessages());
-        }
-        return new Result();
+        return createValidationResult(validationResult);
     }
 
     /**
@@ -163,15 +160,22 @@ public class DockerMaterialPoller implements PackageMaterialPoller {
      * @return
      */
     private Result packageValidation(
-            final PackageConfiguration packageConfigurations, 
+            final PackageConfiguration packageConfigurations,
             final RepositoryConfiguration repositoryPackageConfiguration) {
 
         LOG.info("package validation is called");
         ValidationResult validationResult = new DockerMaterialConfiguration().isPackageConfigurationValid(packageConfigurations, repositoryPackageConfiguration);
+        return createValidationResult(validationResult);
+    }
+
+    private Result createValidationResult(ValidationResult validationResult) {
+        final Result result;
         if (!validationResult.isSuccessful()) {
-            return new Result().withErrorMessages(validationResult.getMessages());
+            result = new Result().withErrorMessages(validationResult.getMessages());
+        } else {
+            result = new Result();
         }
-        return new Result();
+        return result;
     }
 
     /**

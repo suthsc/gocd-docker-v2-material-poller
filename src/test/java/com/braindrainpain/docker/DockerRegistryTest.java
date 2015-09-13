@@ -23,11 +23,8 @@ SOFTWARE.
  */
 package com.braindrainpain.docker;
 
-import com.braindrainpain.docker.httpsupport.DockerApiHttpHandler;
-import com.braindrainpain.docker.httpsupport.WebMock;
+import com.braindrainpain.docker.httpsupport.WebMockTest;
 import com.thoughtworks.go.plugin.api.response.validation.ValidationResult;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -39,23 +36,9 @@ import static org.junit.Assert.fail;
  * @author Manuel Kasiske
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DockerRegistryTest {
-
-    private WebMock webMock;
+public class DockerRegistryTest extends WebMockTest{
 
     private DockerRegistry dockerRegistry;
-
-    @Before
-    public void setUp() {
-        DockerApiHttpHandler handler = new DockerApiHttpHandler();
-        webMock = new WebMock(handler, 5000);
-        webMock.start();
-    }
-
-    @After
-    public void tearDown() {
-        webMock.stop();
-    }
 
     @Test
     public void testGetInstanceWithPlainUrlShouldDeliverV2ApiExtension() {
@@ -87,6 +70,7 @@ public class DockerRegistryTest {
         dockerRegistry = DockerRegistry.getInstance("htty://www.anyDomain.de");
         ValidationResult validationResult = new ValidationResult();
         dockerRegistry.validate(validationResult);
+
         assertEquals(1, validationResult.getErrors().size());
     }
 

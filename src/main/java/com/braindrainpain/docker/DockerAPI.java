@@ -1,7 +1,7 @@
 /*
  The MIT License (MIT)
 
- Copyright (c) 2014 Jan De Cooman
+ Copyright (c) 2015 Manuel Kasiske
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -28,11 +28,12 @@ package com.braindrainpain.docker;
  * 
  * A wrapper for the specific URLs from the Docker API.
  *
- * @author Jan De Cooman
+ * @author Manuel Kasiske
  */
 public enum DockerAPI {
     
-    V2("{0}/v2/{1}/tags/list");
+    V2("{0}/v2/{1}/tags/list"),
+    MANIFEST("{0}/v2/{1}/manifests/{2}");
     
     private final String url;
 

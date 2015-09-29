@@ -54,7 +54,9 @@ public class DockerMaterialPoller implements PackageMaterialPoller {
 
         // fetch the latest tag
         DockerTag tag = DockerRepository.getInstance(repositoryConfiguration).getLatestRevision(packageConfiguration);
-        return new PackageRevision(tag.getHash(), new Date(), "docker");
+        LOG.info("tag.getRevision(): "+tag.getRevision());
+        LOG.info("DockerTag.toString():"+tag.toString());
+        return new PackageRevision(tag.getRevision(), new Date(), "docker");
     }
 
     @Override

@@ -56,18 +56,20 @@ public class DockerRepository {
 
     public DockerTag getLatestRevision(final PackageConfiguration packageConfiguration) {
         String tagName = packageConfiguration.get(Constants.TAG).getValue();
-        JsonArray jsonTags = getAllTags(packageConfiguration);
-        return this.getLatestTag(jsonTags, tagName);
+        JsonArray allTagsJson = getAllTags(packageConfiguration);
+        JsonArray manifestsJson = getManifests(tagName,packageConfiguration);
+        String revision = manifestsJson.getAsJsonArray().get(0).getAsJsonObject().get("blobSum").getAsString();
+        return this.getLatestTag(allTagsJson, tagName, revision);
     }
 
-    private DockerTag getLatestTag(final JsonArray tags, final String tagName) {
+    private DockerTag getLatestTag(final JsonArray tags, final String tagName, final String revision) {
         DockerTag result = null;
         for (Iterator<JsonElement> iterator = tags.iterator(); iterator.hasNext(); ) {
             String value = iterator.next().getAsString();
             LOG.info("looking for tag named: "+tagName);
             LOG.info("value: " + value);
             if (tagName.equals(value)) {
-                result = new DockerTag(tagName, value);
+                result = new DockerTag(value, revision);
                 LOG.info("Found tag: " + result);
             }
         }
@@ -76,9 +78,9 @@ public class DockerRepository {
 
     /**
      * Call the Docker API.
-     * 
+     *
      * @param packageConfiguration
-     * @return 
+     * @return
      */
     private JsonArray getAllTags(final PackageConfiguration packageConfiguration) {
         JsonArray result;
@@ -87,9 +89,17 @@ public class DockerRepository {
                 repositoryConfiguration.get(Constants.REGISTRY).getValue(),
                 packageConfiguration.get(Constants.REPOSITORY).getValue());
         LOG.info("repository: "+repository);
-        result = httpClientService.getJsonElements(repository);
+        result = httpClientService.parseJsonElements(repository, "tags");
 
         return result;
+    }
+
+    private JsonArray getManifests(final String tagName, final PackageConfiguration packageConfiguration) {
+        String manifestsUrl = MessageFormat.format(DockerAPI.MANIFEST.getUrl(),
+                repositoryConfiguration.get(Constants.REGISTRY).getValue(),
+                packageConfiguration.get(Constants.REPOSITORY).getValue(),
+                tagName);
+        return httpClientService.parseJsonElements(manifestsUrl, "fsLayers");
     }
 
 

@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2014 Jan De Cooman
+Copyright (c) 2015 Manuel Kasiske
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -84,14 +84,14 @@ public class HttpClientService {
     }
 
 
-    public JsonArray getJsonElements(String url) {
+    public JsonArray parseJsonElements(String url, String memberName) {
         JsonArray result = null;
         try {
             GetMethod get = new GetMethod(url);
             if (httpClient.executeMethod(get) == HttpStatus.SC_OK) {
                 String jsonString = get.getResponseBodyAsString();
                 LOG.info("RECIEVED: " + jsonString);
-                result = (JsonArray) ((JsonObject) new JsonParser().parse(jsonString)).get("tags");
+                result = parseJson(jsonString, memberName);
                 LOG.info("Build result: "+result);
             }
         } catch (IOException e) {
@@ -104,6 +104,9 @@ public class HttpClientService {
         return result;
     }
 
+    private JsonArray parseJson(String jsonString, String memberName) {
+        return (JsonArray) ((JsonObject) new JsonParser().parse(jsonString)).get(memberName);
+    }
 
     private HttpClient createHttpClient() {
         HttpClient client = new HttpClient();
@@ -125,5 +128,4 @@ public class HttpClientService {
             return defaultValue;
         }
     }
-
 }

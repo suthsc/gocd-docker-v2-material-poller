@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2014 Jan De Cooman
+Copyright (c) 2015 Manuel Kasiske
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -57,11 +57,11 @@ public class DockerMaterialPollerTest extends WebMockTest {
     }
 
     @Test
-    public void testGetLatestRevisionShouldBeReturnLatest() {
+    public void testGetLatestRevisionShouldBeReturnLatestHashCode() {
         RepositoryConfiguration repositoryConfiguration = getRepositoryConfiguration();
         PackageConfiguration packageConfiguration = getPackageConfiguration();
-
-        assertEquals("latest", dockerMaterialPoller.getLatestRevision(packageConfiguration, repositoryConfiguration).getRevision());
+        assertEquals("sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4",
+                dockerMaterialPoller.getLatestRevision(packageConfiguration, repositoryConfiguration).getRevision());
     }
 
     @Test

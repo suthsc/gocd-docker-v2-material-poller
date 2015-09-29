@@ -84,7 +84,7 @@ public class HttpClientService {
     }
 
 
-    public JsonArray parseJsonElements(String url, String memberName) {
+    public JsonArray getJsonElementsFromUrl(String url, String memberName) {
         JsonArray result = null;
         try {
             GetMethod get = new GetMethod(url);

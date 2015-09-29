@@ -124,7 +124,7 @@ public class DockerApiHttpHandler implements HttpHandler {
             "            },\n" +
             "            \"alg\": \"ES256\"\n" +
             "         },\n" +
-            "         \"signature\": \"jmL8mqrf7mSFtZ0SqCQMGwRpV8bjvRSw__FHycvC-fyxVhUAbADmZ6fEdlQ1XmwxphxbLtMPT9pMfK1MDOrnbQ\",\n" +
+            "         \"signature\": \"oS81liGLVMOPQ2j16ETC68habsnsJKDCr6GzUSAc7brHgkBOfLMPXQNymNPDKFrbGdUqp1QZDCMby0za8l7C6Q\",\n" +
             "         \"protected\": \"eyJmb3JtYXRMZW5ndGgiOjUwMTksImZvcm1hdFRhaWwiOiJDbjAiLCJ0aW1lIjoiMjAxNS0wOS0yNVQxNTo1Nzo1NVoifQ\"\n" +
             "      },\n" +
             "      {\n" +

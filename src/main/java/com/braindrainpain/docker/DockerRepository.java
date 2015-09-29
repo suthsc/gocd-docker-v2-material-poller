@@ -26,6 +26,7 @@ package com.braindrainpain.docker;
 import com.braindrainpain.docker.httpsupport.HttpClientService;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageConfiguration;
 import com.thoughtworks.go.plugin.api.material.packagerepository.RepositoryConfiguration;
@@ -57,8 +58,8 @@ public class DockerRepository {
     public DockerTag getLatestRevision(final PackageConfiguration packageConfiguration) {
         String tagName = packageConfiguration.get(Constants.TAG).getValue();
         JsonArray allTagsJson = getAllTags(packageConfiguration);
-        JsonArray manifestsJson = getManifests(tagName,packageConfiguration);
-        String revision = manifestsJson.getAsJsonArray().get(0).getAsJsonObject().get("blobSum").getAsString();
+        String revision = getRevisionFromHistory(tagName, packageConfiguration);
+        LOG.info("found revision in manifests: "+revision);
         return this.getLatestTag(allTagsJson, tagName, revision);
     }
 
@@ -89,17 +90,23 @@ public class DockerRepository {
                 repositoryConfiguration.get(Constants.REGISTRY).getValue(),
                 packageConfiguration.get(Constants.REPOSITORY).getValue());
         LOG.info("repository: "+repository);
-        result = httpClientService.parseJsonElements(repository, "tags");
+        result = httpClientService.getJsonElementsFromUrl(repository, "tags");
 
         return result;
     }
 
-    private JsonArray getManifests(final String tagName, final PackageConfiguration packageConfiguration) {
+    private JsonArray getHistory(final String tagName, final PackageConfiguration packageConfiguration) {
         String manifestsUrl = MessageFormat.format(DockerAPI.MANIFEST.getUrl(),
                 repositoryConfiguration.get(Constants.REGISTRY).getValue(),
                 packageConfiguration.get(Constants.REPOSITORY).getValue(),
                 tagName);
-        return httpClientService.parseJsonElements(manifestsUrl, "fsLayers");
+        return httpClientService.getJsonElementsFromUrl(manifestsUrl, "history");
+    }
+
+    private String getRevisionFromHistory(final String tagName, final PackageConfiguration packageConfiguration) {
+        JsonArray historyJson = getHistory(tagName, packageConfiguration);
+        String firstHistoryEntry = historyJson.getAsJsonArray().get(0).getAsJsonObject().get("v1Compatibility").getAsString();
+        return new JsonParser().parse(firstHistoryEntry).getAsJsonObject().get("id").getAsString();
     }
 
 

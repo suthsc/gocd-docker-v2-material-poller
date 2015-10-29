@@ -37,11 +37,11 @@ import java.text.MessageFormat;
 public class DockerApiHttpHandler implements HttpHandler {
 
 
-    protected final static String DUMMY_JSON_SUCCESS_RESPONSE = "{\"name\":\"pharmacy-service\",\"tags\":[\"3\",\"1\",\"latest\",\"2\"]}";
-    protected final static String EMPTY_JSON_RESPONSE = "{}";
-    protected final static String DUMMY_TAGS_DOCKER_API_URL = MessageFormat.format(DockerAPI.V2.getUrl(),"http://localhost:5000","pharmacy-service");
-    protected final static String DUMMY_ERROR_MESSAGE = "{\"errors\":[{\"code\":\"NAME_UNKNOWN\",\"message\":\"repository name not known to registry\",\"detail\":{\"name\":\"{0}\"}}]}";
-    protected final static String DUMMY_MANIFESTS_DOCKER_API_URL = MessageFormat.format(DockerAPI.MANIFEST.getUrl(),"http://localhost:5000","pharmacy-service","latest");
+    protected static final String DUMMY_JSON_SUCCESS_RESPONSE = "{\"name\":\"pharmacy-service\",\"tags\":[\"3\",\"1\",\"latest\",\"2\"]}";
+    protected static final String EMPTY_JSON_RESPONSE = "{}";
+    protected static final String DUMMY_TAGS_DOCKER_API_URL = MessageFormat.format(DockerAPI.V2.getUrl(),"http://localhost:5000","pharmacy-service");
+    protected static final String DUMMY_ERROR_MESSAGE = "{\"errors\":[{\"code\":\"NAME_UNKNOWN\",\"message\":\"repository name not known to registry\",\"detail\":{\"name\":\"{0}\"}}]}";
+    protected static final String DUMMY_MANIFESTS_DOCKER_API_URL = MessageFormat.format(DockerAPI.MANIFEST.getUrl(),"http://localhost:5000","pharmacy-service","latest");
 
     protected final static String DUMMY_MANIFESTS_JSON_RESPONSE = "{\n" +
             "   \"schemaVersion\": 1,\n" +

@@ -23,33 +23,30 @@ SOFTWARE.
  */
 package com.braindrainpain.docker;
 
+import com.braindrainpain.docker.httpsupport.HttpClientService;
 import com.thoughtworks.go.plugin.api.config.Property;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.material.packagerepository.RepositoryConfiguration;
 import com.thoughtworks.go.plugin.api.response.validation.ValidationError;
 import com.thoughtworks.go.plugin.api.response.validation.ValidationResult;
-import java.io.IOException;
+import org.apache.commons.lang.StringUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Docker Registry connector.
  *
  * @author Jan De Cooman
  */
-public class DockerRegistry extends HttpSupport {
+public class DockerRegistry  {
 
-    final private Logger LOG = Logger.getLoggerFor(DockerRegistry.class);
+    private final String url;
 
-    final private String url;
+    private static final List<String> protocols = new ArrayList<>(2);
 
-    final private static List<String> protocols = new ArrayList<>(2);
+    private final HttpClientService httpClientService = new HttpClientService();
 
     /**
      * Supported protocols.
@@ -65,7 +62,8 @@ public class DockerRegistry extends HttpSupport {
      * @param url RegistryURL
      */
     private DockerRegistry(final String url) {
-        this.url = url;
+        //TODO: try to let user configure the first matching sc ok status uri!
+        this.url = url + "/v2/";
     }
 
     public static DockerRegistry getInstance(final String url) {
@@ -92,11 +90,13 @@ public class DockerRegistry extends HttpSupport {
             }
             URL validatedUrl = new URL(this.url);
             if (!protocols.contains(validatedUrl.getProtocol())) {
-                validationResult.addError(new ValidationError(Constants.REGISTRY, "Invalid URL: Only 'http' and 'https' protocols are supported."));
+                validationResult.addError(new ValidationError(Constants.REGISTRY,
+                        "Invalid URL: Only 'http' and 'https' protocols are supported."));
             }
 
             if (StringUtils.isNotBlank(validatedUrl.getUserInfo())) {
-                validationResult.addError(new ValidationError(Constants.REGISTRY, "User info should not be provided as part of the URL. Please provide credentials using USERNAME and PASSWORD configuration keys."));
+                validationResult.addError(new ValidationError(Constants.REGISTRY,
+                        "User info should not be provided as part of the URL. Please provide credentials using USERNAME and PASSWORD configuration keys."));
             }
         } catch (MalformedURLException e) {
             validationResult.addError(new ValidationError(Constants.REGISTRY, "Invalid URL : " + url));
@@ -107,20 +107,7 @@ public class DockerRegistry extends HttpSupport {
      * Checks the connection to the registry
      */
     public void checkConnection() {
-        LOG.debug("Checking: '" + url + "'");
-        HttpClient client = getHttpClient();
-        GetMethod method = new GetMethod(url);
-        method.setFollowRedirects(false);
-        try {
-            int returnCode = client.executeMethod(method);
-            if (returnCode != HttpStatus.SC_OK) {
-                LOG.error("Not ok from: '" + url + "'");
-                throw new RuntimeException("Not ok from: '" + url +"'");
-            }
-        } catch (IOException e) {
-            LOG.error("Error connecting to: '" + url + "'");
-            throw new RuntimeException("Error connecting to: '" + url +"'");
-        }
+        httpClientService.checkConnection(url);
     }
 
     public String getUrl() {

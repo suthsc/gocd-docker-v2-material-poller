@@ -23,30 +23,29 @@ SOFTWARE.
  */
 package com.braindrainpain.docker;
 
+import com.braindrainpain.docker.httpsupport.HttpClientService;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageConfiguration;
 import com.thoughtworks.go.plugin.api.material.packagerepository.RepositoryConfiguration;
 
-import java.io.IOException;
 import java.text.MessageFormat;
-import com.thoughtworks.go.plugin.api.logging.Logger;
-import java.util.Map;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+import java.util.Iterator;
 
 /**
  * Docker Repository connector.
  *
  * @author Jan De Cooman
  */
-public class DockerRepository extends HttpSupport {
+public class DockerRepository {
 
-    final private static Logger LOG = Logger.getLoggerFor(DockerRepository.class);
+    private static final Logger LOG = Logger.getLoggerFor(DockerRepository.class);
 
-    final private RepositoryConfiguration repositoryConfiguration;
+    private final RepositoryConfiguration repositoryConfiguration;
+
+    private final HttpClientService httpClientService = new HttpClientService();
 
     private DockerRepository(final RepositoryConfiguration repositoryConfiguration) {
         this.repositoryConfiguration = repositoryConfiguration;
@@ -57,18 +56,22 @@ public class DockerRepository extends HttpSupport {
     }
 
     public DockerTag getLatestRevision(final PackageConfiguration packageConfiguration) {
-        String tagName = packageConfiguration.get(Constants.TAG).getValue();        
-        JsonObject jsonTags = this.allTags(packageConfiguration);
-        return this.getLatestTag(jsonTags, tagName);
+        String tagName = packageConfiguration.get(Constants.TAG).getValue();
+        JsonArray allTagsJson = getAllTags(packageConfiguration);
+        String revision = getRevisionFromHistory(tagName, packageConfiguration);
+        LOG.info("found revision in manifests: "+revision);
+        return this.getLatestTag(allTagsJson, tagName, revision);
     }
 
-    private DockerTag getLatestTag(final JsonObject tags, final String tagName) {
+    private DockerTag getLatestTag(final JsonArray tags, final String tagName, final String revision) {
         DockerTag result = null;
-        for (Map.Entry<String, JsonElement> entry : tags.entrySet()) {
-            if (tagName.equals(entry.getKey())) {
-                result = new DockerTag(entry.getKey(), entry.getValue().getAsString());
+        for (Iterator<JsonElement> iterator = tags.iterator(); iterator.hasNext(); ) {
+            String value = iterator.next().getAsString();
+            LOG.info("looking for tag named: "+tagName);
+            LOG.info("value: " + value);
+            if (tagName.equals(value)) {
+                result = new DockerTag(value, revision);
                 LOG.info("Found tag: " + result);
-                break;
             }
         }
         return result;
@@ -76,32 +79,36 @@ public class DockerRepository extends HttpSupport {
 
     /**
      * Call the Docker API.
-     * 
+     *
      * @param packageConfiguration
-     * @return 
+     * @return
      */
-    private JsonObject allTags(final PackageConfiguration packageConfiguration) {
-        JsonObject result = null;
-        HttpClient client = super.getHttpClient();
-
-        String repository = MessageFormat.format(DockerAPI.V1.getUrl(),
+    private JsonArray getAllTags(final PackageConfiguration packageConfiguration) {
+        JsonArray result;
+        LOG.info("getAllTags is called");
+        String repository = MessageFormat.format(DockerAPI.V2.getUrl(),
                 repositoryConfiguration.get(Constants.REGISTRY).getValue(),
                 packageConfiguration.get(Constants.REPOSITORY).getValue());
-        
-        try {
-            GetMethod get = new GetMethod(repository);
-            if (client.executeMethod(get) == HttpStatus.SC_OK) {
-                String jsonString = get.getResponseBodyAsString();
-                LOG.info("RECIEVED: " + jsonString);
-                result = (JsonObject) new JsonParser().parse(jsonString);
-            }
-        } catch (IOException e) {
-            // Wrap into a runtime. There is nothing useful to do here
-            // when this happens.
-            throw new RuntimeException("Cannot fetch the tags from " + repository, e);
-        }
+        LOG.info("repository: "+repository);
+        result = httpClientService.getJsonElementsFromUrl(repository, "tags");
 
         return result;
     }
+
+    private JsonArray getHistory(final String tagName, final PackageConfiguration packageConfiguration) {
+        String manifestsUrl = MessageFormat.format(DockerAPI.MANIFEST.getUrl(),
+                repositoryConfiguration.get(Constants.REGISTRY).getValue(),
+                packageConfiguration.get(Constants.REPOSITORY).getValue(),
+                tagName);
+        return httpClientService.getJsonElementsFromUrl(manifestsUrl, "history");
+    }
+
+    private String getRevisionFromHistory(final String tagName, final PackageConfiguration packageConfiguration) {
+        JsonArray historyJson = getHistory(tagName, packageConfiguration);
+        String firstHistoryEntry = historyJson.getAsJsonArray().get(0).getAsJsonObject().get("v1Compatibility").getAsString();
+        return new JsonParser().parse(firstHistoryEntry).getAsJsonObject().get("id").getAsString();
+    }
+
+
 
 }

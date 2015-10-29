@@ -21,28 +21,42 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
  */
-package com.braindrainpain.docker;
+package com.braindrainpain.docker.httpsupport;
+
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpServer;
+import com.thoughtworks.go.plugin.api.logging.Logger;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.concurrent.Executors;
 
 /**
- * DockerAPI
- * 
- * A wrapper for the specific URLs from the Docker API.
- *
  * @author Manuel Kasiske
  */
-public enum DockerAPI {
-    
-    V2("{0}/v2/{1}/tags/list"),
-    MANIFEST("{0}/v2/{1}/manifests/{2}");
-    
-    private final String url;
+public class WebMock {
 
-    private DockerAPI(final String url) {
-        this.url = url;
-    }
-    
-    public String getUrl() {
-        return this.url;
+    private final Logger LOG = Logger.getLoggerFor(HttpClientService.class);
+    private HttpServer server;
+
+    public WebMock(final DockerApiHttpHandler handler, final Integer port) {
+        try {
+            server = HttpServer.create(new InetSocketAddress(port),0);
+        } catch (IOException e) {
+            LOG.error("can't create http server");
+        }
+        server.createContext("/", handler);
+        server.setExecutor(Executors.newCachedThreadPool());
     }
 
+    public void start() {
+        server.start();
+        LOG.info("Server started");
+    }
+
+    public void stop() {
+        if (server != null) {
+            server.stop(0);
+            LOG.info("Server stopped");
+        }
+    }
 }

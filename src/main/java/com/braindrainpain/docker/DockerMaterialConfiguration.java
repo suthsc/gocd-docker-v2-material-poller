@@ -75,9 +75,10 @@ public class DockerMaterialConfiguration implements PackageMaterialConfiguration
     public PackageConfiguration getPackageConfiguration() {
         PackageConfiguration packageConfiguration = new PackageConfiguration();
         packageConfiguration.add(new PackageMaterialProperty(Constants.REPOSITORY).
-                with(DISPLAY_NAME, "Repository").with(DISPLAY_ORDER, 0));
+                with(DISPLAY_NAME, "Image").with(DISPLAY_ORDER, 0));
         packageConfiguration.add(new PackageMaterialProperty(Constants.TAG, "latest").
                 with(REQUIRED, false).with(DISPLAY_NAME, "Tag").with(DISPLAY_ORDER, 1));
+        LOG.info("build package configuration :"+packageConfiguration.list().toString());
         return packageConfiguration;
     }
 

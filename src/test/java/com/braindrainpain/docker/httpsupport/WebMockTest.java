@@ -21,28 +21,31 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
  */
-package com.braindrainpain.docker;
+package com.braindrainpain.docker.httpsupport;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * DockerAPI
- * 
- * A wrapper for the specific URLs from the Docker API.
- *
  * @author Manuel Kasiske
  */
-public enum DockerAPI {
-    
-    V2("{0}/v2/{1}/tags/list"),
-    MANIFEST("{0}/v2/{1}/manifests/{2}");
-    
-    private final String url;
+@RunWith(MockitoJUnitRunner.class)
+public abstract class WebMockTest {
 
-    private DockerAPI(final String url) {
-        this.url = url;
+    private WebMock webMock;
+
+    @Before
+    public void setUp() {
+        DockerApiHttpHandler handler = new DockerApiHttpHandler();
+        webMock = new WebMock(handler, 5000);
+        webMock.start();
     }
-    
-    public String getUrl() {
-        return this.url;
+
+    @After
+    public void tearDown() {
+        webMock.stop();
     }
 
 }

@@ -1,0 +1,9 @@
+language: java
+jdk:
+  - oraclejdk8
+
+deploy:
+  provider: bintray
+  file: "descriptor.json"
+  user: "kasiske"
+  key: "23544749ae1a879bfc6d51fd35cebf1dc3a63994"

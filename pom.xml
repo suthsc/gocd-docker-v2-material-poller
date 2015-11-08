@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.braindrainpain</groupId>
     <artifactId>docker-material-poller</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,11 +45,6 @@
      </pluginRepositories>
     
     <dependencies> 
-        <!--<dependency>
-            <groupId>com.thoughtworks.go</groupId>
-            <artifactId>go-plugin-api</artifactId>
-            <version>14.3.0</version>
-        </dependency>-->
 	<dependency>
 		<groupId>cd.go.plugin</groupId>
 		<artifactId>go-plugin-api</artifactId>
@@ -167,6 +162,26 @@
                 <artifactId>maven-install-plugin</artifactId>
                 <version>2.5</version>
             </plugin>
+
+	<plugin>
+      <artifactId>maven-release-plugin</artifactId>
+      <version>2.4.1</version>
+      <configuration>
+        <useReleaseProfile>false</useReleaseProfile>
+        <releaseProfiles>release</releaseProfiles>
+        <autoVersionSubmodules>true</autoVersionSubmodules>
+      </configuration>
+    </plugin>
+
         </plugins>
     </build>
+
+    <distributionManagement>
+    	<repository>
+  	  <id>bintray</id>
+	  <url>https://api.bintray.com/maven/manuelkasiske/maven/gocd-docker-v2-material-poller;publish=1</url>
+    	</repository>
+    </distributionManagement>
+	
+
 </project>

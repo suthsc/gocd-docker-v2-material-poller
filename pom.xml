@@ -20,7 +20,7 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
 	<repository>
-	  <id>central</id>
+	  <id>maven central</id>
   	  <name>Maven Central</name>
 	  <url>http://repo1.maven.org/maven2</url>
 	</repository>  
@@ -97,8 +97,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.10.9</version>
-	    <type>md5</type>
+            <version>1.10.19</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

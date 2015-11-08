@@ -18,7 +18,12 @@
         <repository>
             <id>sonatype-nexus-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>  
+        </repository>
+	<repository>
+	  <id>central</id>
+  	  <name>Maven Central</name>
+	  <url>http://repo1.maven.org/maven2</url>
+	</repository>  
         <repository>
             <snapshots>
                 <enabled>false</enabled>
@@ -93,6 +98,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.10.9</version>
+	    <type>md5</type>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

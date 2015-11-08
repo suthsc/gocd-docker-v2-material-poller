@@ -179,7 +179,7 @@
     <distributionManagement>
     	<repository>
   	  <id>bintray</id>
-	  <url>https://api.bintray.com/maven/manuelkasiske/maven/gocd-docker-v2-material-poller</url>
+	  <url>https://api.bintray.com/maven/manuelkasiske/maven/gocd-docker-v2-material-poller;publish=1</url>
     	</repository>
     </distributionManagement>
 	

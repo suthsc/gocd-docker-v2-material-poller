@@ -10,7 +10,7 @@
     </properties>
     <developers>
         <developer>
-            <name>J. De Cooman</name>
+            <name>Manuel Kasiske</name>
         </developer>
     </developers>
     
@@ -30,11 +30,16 @@
     </repositories>
     
     <dependencies> 
-        <dependency>
+        <!--<dependency>
             <groupId>com.thoughtworks.go</groupId>
             <artifactId>go-plugin-api</artifactId>
             <version>14.3.0</version>
-        </dependency>
+        </dependency>-->
+	<dependency>
+		<groupId>cd.go.plugin</groupId>
+		<artifactId>go-plugin-api</artifactId>
+		<version>14.4.0</version>		
+	</dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>

@@ -27,3 +27,9 @@ You can specify the connection and socket timeout when you're not satisfied with
 <h2>Credits</h2>
 
 The project has been inspired by https://github.com/hammerdr/go-docker-registry-poller and the yum plugin from Thoughtworks.
+
+<h2>Deployment</h2>
+
+Download go-docker-registry poller from bintray https://bintray.com/manuelkasiske/maven/gocd-docker-v2-material-poller/view
+
+

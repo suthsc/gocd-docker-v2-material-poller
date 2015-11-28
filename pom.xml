@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.braindrainpain</groupId>
     <artifactId>docker-material-poller</artifactId>
@@ -13,17 +14,17 @@
             <name>Manuel Kasiske</name>
         </developer>
     </developers>
-    
+
     <repositories>
         <repository>
             <id>sonatype-nexus-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
-	<repository>
-	  <id>maven central</id>
-  	  <name>Maven Central</name>
-	  <url>http://repo1.maven.org/maven2</url>
-	</repository>  
+        <repository>
+            <id>maven central</id>
+            <name>Maven Central</name>
+            <url>http://repo1.maven.org/maven2</url>
+        </repository>
         <repository>
             <snapshots>
                 <enabled>false</enabled>
@@ -31,25 +32,25 @@
             <id>central</id>
             <name>bintray</name>
             <url>http://jcenter.bintray.com</url>
-        </repository>    
+        </repository>
     </repositories>
     <pluginRepositories>
-	<pluginRepository>
-	<snapshots>
-	<enabled>false</enabled>
-	</snapshots>
-		<id>central</id>
-		<name>bintray-plugins</name>
-		<url>http://jcenter.bintray.com</url>
-	</pluginRepository>
-     </pluginRepositories>
-    
-    <dependencies> 
-	<dependency>
-		<groupId>cd.go.plugin</groupId>
-		<artifactId>go-plugin-api</artifactId>
-		<version>14.4.0</version>		
-	</dependency>
+        <pluginRepository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>bintray-plugins</name>
+            <url>http://jcenter.bintray.com</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>cd.go.plugin</groupId>
+            <artifactId>go-plugin-api</artifactId>
+            <version>14.4.0</version>
+        </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
@@ -106,10 +107,10 @@
             <version>2.3.1</version>
         </dependency>
     </dependencies>
-    
-         
+
+
     <build>
-            
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -134,7 +135,7 @@
                 </configuration>
             </plugin>
 
-     
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -156,32 +157,32 @@
                     </execution>
                 </executions>
             </plugin>
-        
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <version>2.5</version>
             </plugin>
 
-	<plugin>
-      <artifactId>maven-release-plugin</artifactId>
-      <version>2.4.1</version>
-      <configuration>
-        <useReleaseProfile>false</useReleaseProfile>
-        <releaseProfiles>release</releaseProfiles>
-        <autoVersionSubmodules>true</autoVersionSubmodules>
-      </configuration>
-    </plugin>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
 
         </plugins>
     </build>
 
     <distributionManagement>
-    	<repository>
-  	  <id>bintray</id>
-	  <url>https://api.bintray.com/maven/manuelkasiske/maven/gocd-docker-v2-material-poller</url>
-    	</repository>
+        <repository>
+            <id>bintray</id>
+            <url>https://api.bintray.com/maven/neofonie/maven/gocd-docker-v2-material-poller</url>
+        </repository>
     </distributionManagement>
-	
+
 
 </project>

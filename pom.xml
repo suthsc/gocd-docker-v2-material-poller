@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.braindrainpain</groupId>
     <artifactId>docker-material-poller</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <scm>
         <connection>scm:git:https://github.com/Neofonie/gocd-docker-v2-material-poller.git</connection>
         <developerConnection>scm:git:git@github.com:Neofonie/gocd-docker-v2-material-poller.git</developerConnection>
         <url>https://github.com/Neofonie/gocd-docker-v2-material-poller</url>
-        <tag>docker-material-poller-0.0.6</tag>
+        <tag>docker-material-poller-0.0.4</tag>
     </scm>
 
 

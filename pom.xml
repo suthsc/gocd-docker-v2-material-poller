@@ -108,7 +108,7 @@
     </build>
 
     <reporting>
-        <outputDirectory>target/site</outputDirectory>
+        <outputDirectory>${project.build.directory}/site</outputDirectory>
     </reporting>
 
     <profiles>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <name>Docker Material Poller</name>
     <groupId>com.braindrainpain</groupId>
     <artifactId>docker-material-poller</artifactId>
     <version>0.0.9-SNAPSHOT</version>
     <packaging>jar</packaging>
-
     <repositories>
         <repository>
             <id>sonatype-nexus-snapshots</id>
@@ -26,7 +26,6 @@
             <url>http://jcenter.bintray.com</url>
         </repository>
     </repositories>
-
     <pluginRepositories>
         <pluginRepository>
             <snapshots>
@@ -37,10 +36,7 @@
             <url>http://jcenter.bintray.com</url>
         </pluginRepository>
     </pluginRepositories>
-
-
     <build>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -51,7 +47,6 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -64,8 +59,6 @@
                     </archive>
                 </configuration>
             </plugin>
-
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -87,13 +80,11 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <version>2.5</version>
             </plugin>
-
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.4.1</version>
@@ -103,14 +94,11 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
-
     <reporting>
         <outputDirectory>${project.build.directory}/site</outputDirectory>
     </reporting>
-
     <profiles>
         <profile>
             <id>release</id>
@@ -146,7 +134,6 @@
             </build>
         </profile>
     </profiles>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -155,9 +142,6 @@
             <name>Manuel Kasiske</name>
         </developer>
     </developers>
-
-
-
     <dependencies>
         <dependency>
             <groupId>cd.go.plugin</groupId>
@@ -220,21 +204,16 @@
             <version>2.3.1</version>
         </dependency>
     </dependencies>
-
-
     <scm>
         <connection>scm:git:https://github.com/Neofonie/gocd-docker-v2-material-poller.git</connection>
         <developerConnection>scm:git:git@github.com:Neofonie/gocd-docker-v2-material-poller.git</developerConnection>
         <url>https://github.com/Neofonie/gocd-docker-v2-material-poller</url>
         <tag>docker-material-poller-0.0.4</tag>
     </scm>
-
     <distributionManagement>
         <repository>
             <id>bintray</id>
             <url>https://api.bintray.com/maven/neofonie/maven/gocd-docker-v2-material-poller</url>
         </repository>
     </distributionManagement>
-
-
 </project>

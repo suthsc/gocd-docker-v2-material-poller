@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<go-plugin id="Docker" version="6">
+<go-plugin id="Docker" version="1">
 <about>
     <name>Docker Registry Plugin V2 API</name>
-    <version>0.0.1</version>
-    <target-go-version>14.3</target-go-version>
+    <version>${project.version}</version>
+    <target-go-version>${target.go.version}</target-go-version>
     <description>
         Check for new Docker releases in a Docker Registry. This plugin is using the v2 api of docker registry.
         For more detailed information see: https://docs.docker.com/registry/spec/api/

@@ -107,7 +107,12 @@ public class DockerRegistry  {
      * Checks the connection to the registry
      */
     public void checkConnection() {
-        httpClientService.checkConnection(url);
+        // TODO: Fix the URL rewriting.
+        String dr_url = url;
+        if (url.endsWith("/")) {
+            dr_url = url.substring(0, url.length() - 1);
+        }
+        httpClientService.checkConnection(dr_url);
     }
 
     public String getUrl() {

@@ -156,6 +156,8 @@ public class DockerApiHttpHandler implements HttpHandler {
             sendMessage(httpExchange, DUMMY_MANIFESTS_JSON_RESPONSE);
         }else if(httpExchange.getRequestURI().toString().equals("/v2/")){
             sendMessage(httpExchange, EMPTY_JSON_RESPONSE);
+        }else if(httpExchange.getRequestURI().toString().equals("/v2")){
+            sendMessage(httpExchange, EMPTY_JSON_RESPONSE);
         } else if(httpExchange.getRequestURI().toString().matches("^/v2/[a-z]++/tags/list")) {
             sendError(httpExchange, DUMMY_ERROR_MESSAGE);
         } else {
